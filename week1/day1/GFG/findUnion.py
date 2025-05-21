@@ -13,6 +13,9 @@ class Solution:
         count = len(set(a) | set(b))
         return count
 
+#Time Complexity = O(n+m)
+#Space Complexity = O(n+m)
+
 if __name__ == "__main__":
     # Take input for first array from user
     arr1=[int(x) for x in input().strip().split()]
