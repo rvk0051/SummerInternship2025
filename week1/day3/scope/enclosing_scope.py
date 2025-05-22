@@ -1,7 +1,8 @@
 # Enclosing Scope
 
 # This is used for nested functions.
-# A function defined inside another function can access variables from its outer (enclosing) function.
+# A function defined inside another function can access variables
+# from its outer (enclosing) function.
 
 #Example:-
 def outer():
