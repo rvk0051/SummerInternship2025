@@ -6,12 +6,12 @@
 # Example:-
 # Python program to demonstrate
 # default arguments
-def myFun(x, y=50):
+def example_function(x, y=50):
 # 50 is the default argument for the parameter y.
     print("x: ", x)
     print("y: ", y)
 
-myFun(10)
+example_function(10)
 # calling a function with only one argument
 
 #Output:-
