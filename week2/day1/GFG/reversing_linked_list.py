@@ -12,12 +12,7 @@ Output: head: 4 -> 3 -> 2 -> 1 -> NULL
 Solution:
 function reverseList(self, head) is the solution function.
 
-'''
-
-
-
-'''
-class Node:
+Class Node:
     def __init__(self, newData):
         self.data = newData
         self.next = None
@@ -47,3 +42,6 @@ def reverseList(head):
 
     # Return the head of reversed linked list, which is the last node of the list before reversing.
     return prev
+
+# Time complexity: O(n)
+# Space complexity: O(1)
