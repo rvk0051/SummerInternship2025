@@ -1,0 +1,14 @@
+[
+    {
+        "id": "1",
+        "title": "The Alchemist",
+        "author": "Paulo Coelho",
+        "quantity": 1
+    },
+    {
+        "id": "3",
+        "title": "Holy Stars",
+        "author": "Kathleen Edwards",
+        "quantity": 1
+    }
+]
