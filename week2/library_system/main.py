@@ -62,6 +62,7 @@ def admin_menu():
                     user_id = input("Enter user id: ")
                     name = input("Enter name: ")
                     borrowed_books = []  # Initialize empty borrowed books list
+
                     # Create and add new user
                     new_user = User(user_id, name, borrowed_books)
                     library_instance.add_user(new_user)
@@ -72,35 +73,38 @@ def admin_menu():
             case 3:
                 # Remove book
                 try:
+
                     book_id = input("Enter book id: ")
 
-                    # First check if book exists
-                    try:
-                        quantity = library_instance.get_book_quantity(book_id)
-                    except BookNotFoundError:
-                        print(f"Error: Book with ID {book_id} does not exist in the library!")
-                        continue
+                    # finding quantity of books available in the library
+                    quantity = library_instance.get_book_quantity(book_id)
+                    print(f"Current quantity: {quantity}")
 
-                    if quantity == 0:
-                        print(f"Book with ID {book_id} has no copies available!")
+                    # asks admin to enter quantity of copies to remove
+                    print("Want to remove all copies?, if yes enter 'all' else enter quantity")
+                    copies = input()
+
+                    # removing all copies of the book
+                    if copies.lower() == "all":
+                        print(library_instance.remove_book(book_id))
+
+                    # removing specific number of copies of the book
                     else:
-                        print(f"Current quantity: {quantity}")
-                        print("Want to remove all copies?, if yes enter 'all' else enter quantity")
-                        copies = input()
+                        quantity_to_remove = int(copies)
+                        if quantity_to_remove <= quantity:
+                            library_instance.remove_book_copies(book_id, quantity_to_remove)
+                            print(f"{quantity_to_remove} copies of book with ID {book_id} removed.")
 
-                        if copies.lower() == "all":
-                            print(library_instance.remove_book(book_id))
+                        # if specified number of copies is more than available in the library
                         else:
-                            try:
-                                quantity_to_remove = int(copies)
-                                if quantity_to_remove <= quantity:
-                                    library_instance.remove_book_copies(book_id, quantity_to_remove)
-                                    print(f"{quantity_to_remove} copies of book with ID {book_id} removed.")
-                                else:
-                                    print(
-                                        f"Error: Cannot remove {quantity_to_remove} copies. Only {quantity} copies available.")
-                            except ValueError:
-                                print("Invalid quantity entered!")
+                            print(
+                                f"Error: Cannot remove {quantity_to_remove} copies. Only {quantity} copies available.")
+
+                # if invalid book_id or quantity entered
+                except ValueError:
+                            print("Invalid quantity or book_id entered!")
+
+                # if no book id found with specified book_id
                 except BookNotFoundError as e:
                     print(f"Error: {e}")
 
@@ -114,9 +118,12 @@ def admin_menu():
                     continue
 
                 try:
+                    # removing user from the library
                     result = library_instance.remove_user(user_id)
                     print(result)
+
                 except UserNotFoundError as e:
+                    # if there is no user with given user id, then error is raised
                     print(f"Error: {e}")
 
             case 5:  # Search book
@@ -163,9 +170,13 @@ def library_user_menu():
     books_file = "data/books.json"
     users_file = "data/users.json"
 
+    # creating object 'library_instance' of class 'Library'
     library_instance = Library(books_file, users_file)
+
+    # finding the user in the library
     user = library_instance.get_user_by_id(user_id)
 
+    # if there is no user with the provided user_id
     if user is None:
         print("User does not exist.")
         return
@@ -180,12 +191,13 @@ def library_user_menu():
                 print("Want to search by author or title?")
                 search_by = int(input("Choose 1 for author or 2 for title: "))
 
-                # Handle search by author or title
+                # search by author
                 if search_by == 1:
                     print("Enter author name: ")
                     author = input()
                     print(library_instance.search_book_by_author(author))
 
+                # search by title
                 elif search_by == 2:
                     print("Enter title: ")
                     title = input()
