@@ -1,0 +1,102 @@
+/* Global Styles */
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #212529;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-weight: 600;
+}
+
+/* Navigation */
+.navbar {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.navbar .btn-link {
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  color: #212529;
+  transition: color 0.3s ease;
+}
+
+.navbar .btn-link:hover {
+  color: #0d6efd;
+}
+
+/* Components */
+.alert {
+  margin-top: 1rem;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-left: 4px solid #0d6efd;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-title a {
+  text-decoration: none;
+  color: #212529;
+  transition: color 0.3s ease;
+}
+
+.card-title a:hover {
+  color: #0d6efd;
+}
+
+/* Buttons */
+.btn-outline-primary {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-danger:hover {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+/* Footer */
+footer {
+  width: 100%;
+  border-top: 1px solid #ddd;
+  background-color: #f1f1f1;
+  margin-top: auto;
+  padding: 1rem 0;
+}
+
+/* Utility Classes */
+.mt-5 {
+  margin-top: 3rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}

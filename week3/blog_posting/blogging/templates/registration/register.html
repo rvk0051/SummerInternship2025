@@ -1,0 +1,37 @@
+{% extends "blogging/base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm mx-auto" style="max-width: 500px;">
+    <div class="card-body">
+      <h3 class="text-center mb-4">Create an Account</h3>
+
+      <form method="post">
+          {% csrf_token %}
+          <div class="row mb-3 align-items-center">
+              <label for="id_author_name" class="col-sm-4 col-form-label">Display Name</label>
+              <div class="col-sm-8">
+                  {{ form.author_name }}
+              </div>
+          </div>
+          <div class="row mb-3 align-items-center">
+              <label for="id_password1" class="col-sm-4 col-form-label">Password</label>
+              <div class="col-sm-8">
+                  {{ form.password1 }}
+              </div>
+          </div>
+          <div class="row mb-4 align-items-center">
+              <label for="id_password2" class="col-sm-4 col-form-label">Confirm Password</label>
+              <div class="col-sm-8">
+                  {{ form.password2 }}
+              </div>
+          </div>
+          <div class="d-grid">
+              <button type="submit" class="btn btn-success">Register</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
