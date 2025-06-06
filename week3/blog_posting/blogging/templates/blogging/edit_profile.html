@@ -1,0 +1,40 @@
+{% extends "blogging/base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+
+  <!-- Page Heading -->
+  <h2 class="mb-4 text-center">Edit Profile</h2>
+
+  <!-- =========================
+       Profile Update Form
+  ========================== -->
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <!-- Author Name Field -->
+    <div class="mb-3">
+      {{ form.author_name.label_tag }}
+      {{ form.author_name }}
+      {% for error in form.author_name.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Form Buttons -->
+    <div class="d-flex justify-content-between">
+      <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn btn-primary">Update</button>
+    </div>
+  </form>
+
+</div>
+{% endblock %}

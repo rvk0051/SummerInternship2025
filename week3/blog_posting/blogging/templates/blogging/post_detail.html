@@ -1,0 +1,52 @@
+{% extends "blogging/base.html" %}
+
+{% block title %}
+    {{ post.title }} | Blog
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <article>
+            <!-- Post Header -->
+            <header class="mb-4">
+                <h1>{{ post.title }}</h1>
+                <div class="text-muted">
+                    By <strong>{{ post.author.profile.author_name }}</strong>
+                    <time datetime="{{ post.created_at|date:'Y-m-d H:i' }}">
+                        {{ post.created_at|date:"d M Y, h:i A" }}
+                    </time>
+                </div>
+            </header>
+
+            <!-- Post Content -->
+            <div class="post-content mb-5">
+                <p style="white-space: pre-line;">{{ post.content }}</p>
+            </div>
+        </article>
+
+        <!-- Action Buttons -->
+        {% if user == post.author %}
+            <div class="post-actions d-flex gap-3">
+                <a href="{% url 'post-update' post.pk %}" 
+                   class="btn btn-outline-primary"
+                   aria-label="Edit post">
+                    Edit
+                </a>
+                <a href="{% url 'post-delete' post.pk %}" 
+                   class="btn btn-outline-danger"
+                   aria-label="Delete post">
+                    Delete
+                </a>
+            </div>
+        {% endif %}
+
+        <!-- Navigation -->
+        <nav class="mt-5">
+            <a href="{% url 'post-list' %}" 
+               class="btn btn-link"
+               aria-label="Back to posts list">
+                ← Back to Posts
+            </a>
+        </nav>
+    </div>
+{% endblock %}
