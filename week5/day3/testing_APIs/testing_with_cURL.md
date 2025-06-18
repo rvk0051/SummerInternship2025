@@ -32,3 +32,8 @@ The PATCH command is an HTTP method used to apply partial modifications to a res
 ```aiignore
 curl -X PATCH -H "Authorization: Token <your_token_here>" -H "Content-Type: application/json" -d '{"completed": true}' http://localhost:8000/tasks/{id}/
 ```
+
+To get token in cURL:-
+```aiignore
+curl -X POST -H "Content-Type: application/json" -d '{"username": "your_username", "password": "your_password"}' http://localhost:8000/api-token-auth/
+```
