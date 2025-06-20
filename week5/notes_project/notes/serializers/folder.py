@@ -8,6 +8,7 @@ class FolderNotePreviewSerializer(serializers.ModelSerializer):
 
 class FolderSerializer(serializers.ModelSerializer):
     # Creates a serializer for the Folder model
+    id = serializers.IntegerField(required=False)
 
     subfolders = serializers.SerializerMethodField() # Adds a custom field to return nested children folders
 
@@ -34,3 +35,10 @@ class FolderSerializer(serializers.ModelSerializer):
         # Gets all notes inside this folder
         notes = Note.objects.filter(folder=obj)
         return FolderNotePreviewSerializer(notes, many=True).data
+
+    def validate(self, data):
+        user = self.context['request'].user
+        name = data.get('name')
+        parent = data.get('parent')
+
+        return data
