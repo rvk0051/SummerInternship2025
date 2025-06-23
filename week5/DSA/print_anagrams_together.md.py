@@ -21,6 +21,9 @@ Explanation: There are 2 groups of anagrams "is" makes group 1. "no", "on" make 
 # Solution function is 'anagrams'
 
 # Approach1:-
+'''
+Using 'sorted()' function.
+'''
 def anagrams(self, arr):
     '''
     words: list of word
