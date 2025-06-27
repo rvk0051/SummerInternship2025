@@ -6,7 +6,9 @@ from rest_framework.exceptions import ValidationError
 
 from ..models import Leave, Notification
 from ..serializers import LeaveSerializer
+from ..utils import adjust_user_leaves_on_cancel, update_user_leaves_on_update, get_working_days_in_leave
 
+from datetime import date
 
 class LeaveRequestViewSet(viewsets.ModelViewSet):
     queryset = Leave.objects.all()
@@ -29,6 +31,7 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
 
         return Leave.objects.none()
 
+
     @action(detail=False, methods=['get'], url_path='user')
     def my_leaves(self, request):
         user = request.user
@@ -37,6 +40,7 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
         return Response({
             "my_leaves": serializer.data if serializer.data else "No leaves found."
         }, status=200)
+
 
     @action(detail=False, methods=['get'], url_path='juniors')
     def juniors_leaves(self, request):
@@ -47,49 +51,58 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
             "juniors_leaves": serializer.data if serializer.data else "No junior leaves found."
         }, status=200)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data, context=self.get_serializer_context())
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        leave = serializer.save(employee=user)
+
+        # Deduct leave days
         try:
-            serializer.is_valid(raise_exception=True)
-            leave = serializer.save(employee=request.user)
+            leave_days = get_working_days_in_leave(leave.start_date, leave.end_date)
+            today = date.today()
 
-            try:
-                Notification.objects.create(
-                    receiver=leave.employee.senior,
-                    message=(
-                        f"{leave.employee.email} applied for leave "
-                        f"from {leave.start_date} to {leave.end_date} "
-                        f"on {leave.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
-                    ),
-                    sender=request.user
-                )
-            except Exception:
-                pass  # Optional: log error
+            if leave.start_date.month == today.month:
+                user.leaves_available_this_month -= leave_days
+            elif leave.start_date.month == (today.month + 1) % 12:
+                user.leaves_available_next_month -= leave_days
 
-            return Response({
-                "message": "Leave applied successfully.",
-                "data": serializer.data
-            }, status=status.HTTP_201_CREATED)
-
-        except ValidationError as ve:
-            return Response({"message": ve.detail}, status=200)
+            user.save()
         except Exception as e:
-            return Response({"message": f"Unexpected error: {str(e)}"}, status=200)
+            pass  # You may log this
+
+        # Send Notification
+        try:
+            Notification.objects.create(
+                receiver=leave.employee.senior,
+                message=(
+                    f"{leave.employee.email} applied for leave "
+                    f"from {leave.start_date} to {leave.end_date} "
+                    f"on {leave.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
+                ),
+                sender=user
+            )
+        except Exception:
+            pass
+
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-
-        serializer = self.get_serializer(instance, data=request.data, partial=partial, context=self.get_serializer_context())
         try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            old_leave = Leave.objects.get(pk=instance.pk)
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
             serializer.is_valid(raise_exception=True)
-            leave = serializer.save()
-            leave.status = 'PENDING'  # Reset to pending on any update
-            leave.save()
+            self.perform_update(serializer)
+
+            new_leave = serializer.instance
+            update_user_leaves_on_update(old_leave, new_leave)
+
+            new_leave.status = 'PENDING'
+            new_leave.save()
 
             return Response({
                 "message": "Leave updated successfully.",
-                "data": LeaveSerializer(leave, context=self.get_serializer_context()).data
+                "data": LeaveSerializer(new_leave, context=self.get_serializer_context()).data
             }, status=200)
 
         except ValidationError as ve:
@@ -97,8 +110,33 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({"message": f"Unexpected error: {str(e)}"}, status=200)
 
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            leave = self.get_object()
+            adjust_user_leaves_on_cancel(leave)
+            leave.delete()
+            return Response({"message": "Leave cancelled and days restored."}, status=200)
+        except Exception as e:
+            return Response({"error": f"Deletion failed: {str(e)}"}, status=200)
+
+
+    @action(detail=True, methods=['delete'])
+    def cancel(self, request, pk=None):
+        try:
+            leave = self.get_object()
+            adjust_user_leaves_on_cancel(leave)
+            leave.delete()
+            return Response({"message": "Leave cancelled and days restored."}, status=200)
+        except Exception as e:
+            return Response({"error": f"Cancel failed: {str(e)}"}, status=200)
+
+
     @action(detail=True, methods=['post'])
     def approve(self, request, pk=None):
+        '''
+        Used to approve the leave of junior.
+        '''
         try:
             leave = self.get_object()
             user = request.user
@@ -120,6 +158,9 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def reject(self, request, pk=None):
+        '''
+        Used to reject the leave of junior.
+        '''
         try:
             leave = self.get_object()
             user = request.user

@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'is_admin', 'is_staff', 'is_superuser', 'senior_email']
+        fields = ['id', 'username', 'email', 'is_admin', 'is_staff', 'is_superuser', 'senior_email','leaves_available_this_month', 'leaves_available_next_month']
 
     def get_senior_email(self, obj):
         return obj.senior.email if obj.senior else None
@@ -18,7 +18,7 @@ class JuniorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'is_admin', 'is_staff', 'is_superuser', 'senior_email', 'juniors']
+        fields = ['id', 'username', 'email', 'is_admin', 'is_staff', 'is_superuser', 'senior_email', 'juniors', 'leaves_available_this_month', 'leaves_available_next_month']
 
     def get_senior_email(self, obj):
         return obj.senior.email if obj.senior else None

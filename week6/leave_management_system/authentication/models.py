@@ -3,6 +3,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
+
     username = models.CharField(max_length=150, unique=False, blank=True, null=True, default='')
     email = models.EmailField(_('email address'), unique=True)
 
@@ -15,6 +16,9 @@ class User(AbstractUser):
         on_delete=models.SET_NULL,
         related_name='juniors'
     )
+
+    leaves_available_this_month = models.PositiveIntegerField(default=4)
+    leaves_available_next_month = models.PositiveIntegerField(default=4)
 
     USERNAME_FIELD = 'email'  # Login using email
     REQUIRED_FIELDS = ['username']
