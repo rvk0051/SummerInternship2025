@@ -4,9 +4,10 @@ An app is a web application that does something specific. A project can contain 
 
     myapp/
     |-  migrations/
-    |-  __init__.py
+    |-  serializers.py
+    |-  urls.py
     |-  admin.py
-    |- apps.py
+    |-  apps.py
     |-  models.py
     |-  tests.py
     |-  views.py
@@ -31,3 +32,7 @@ This file is where you can write tests for your app to ensure that it behaves as
 
 * ##### views.py: 
 This file is where you define the views that handle requests and return responses.
+
+* ##### serializers.py:
+Used in DRF(Django Rest Framework)
+Serializers convert complex data types, like querysets and model instances, into native Python data types that can then be easily rendered into JSON or XML. They also handle validation and deserialization of incoming data.

@@ -39,6 +39,8 @@ Example:-
    
    
 ### 3. ViewSets: 
+ViewSets are Class-Based Views designed for building REST APIs.
+
 DRF introduces the concept of ViewSets, which combine the logic for handling multiple related views into a single class. This is particularly useful for CRUD operations.
 Example:-
 
