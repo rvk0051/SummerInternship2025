@@ -65,17 +65,18 @@ class UsersConfig(AppConfig):
 ```
 
 ## Diagram: Signal Flow
+```
+  Model Save Called
 
-Model Save Called
-
-↓
+         ↓
 
 pre_save signal → modify instance
 
-↓
+         ↓
 
-Model Saved
+    Model Saved
 
-↓
+         ↓
 
 post_save signal → trigger side-effects (emails, logs)
+```
