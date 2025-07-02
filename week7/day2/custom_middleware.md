@@ -58,7 +58,7 @@ Middleware = global logic without duplication
 ```
 # myapp/middleware.py
 
-class MyCustomMiddleware:
+class <CustomMiddlewareName>:
     def __init__(self, get_response):
         self.get_response = get_response
         print("Middleware initialized")
@@ -76,7 +76,7 @@ class MyCustomMiddleware:
 ```
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'myapp.middleware.MyCustomMiddleware',  # Add this line
+    '<app_name>.middleware.<customized_middleware_name>',  # Add this line
 ]
 ```
  
@@ -103,7 +103,7 @@ The __call__() method makes the middleware class callable, like a function.
 
 ### Django's Internal Flow:
 
-`middleware_instance = MyCustomMiddleware(get_response)
+`middleware_instance = <customized_middleware_name>(get_response)
 response = middleware_instance(request)  # this calls __call__()`
 
 So you never call __call__() manually — Django does it when handling requests.
