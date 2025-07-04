@@ -53,6 +53,9 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
 
 
     def perform_create(self, serializer):
+
+        # Used for applying leave
+
         user = self.request.user
         leave = serializer.save(employee=user)
 
@@ -86,6 +89,7 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
 
 
     def update(self, request, *args, **kwargs):
+        # user updates their leave
         try:
             partial = kwargs.pop('partial', False)
             instance = self.get_object()
@@ -112,9 +116,10 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
 
 
     def destroy(self, request, *args, **kwargs):
+        # overriding default function for deleting leave
         try:
             leave = self.get_object()
-            adjust_user_leaves_on_cancel(leave)
+            adjust_user_leaves_on_cancel(leave) # Restore user's leave balance (custom logic)
             leave.delete()
             return Response({"message": "Leave cancelled and days restored."}, status=200)
         except Exception as e:
@@ -123,9 +128,10 @@ class LeaveRequestViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['delete'])
     def cancel(self, request, pk=None):
+        # Function made for deleting leave
         try:
             leave = self.get_object()
-            adjust_user_leaves_on_cancel(leave)
+            adjust_user_leaves_on_cancel(leave) # Restore user's leave balance (custom logic)
             leave.delete()
             return Response({"message": "Leave cancelled and days restored."}, status=200)
         except Exception as e:

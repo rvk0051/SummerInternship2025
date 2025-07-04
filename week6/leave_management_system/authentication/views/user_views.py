@@ -7,7 +7,7 @@ from ..serializers.user_serializers import UserSerializer, JuniorSerializer
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request):  # user will get it's own data
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
@@ -15,7 +15,7 @@ class CurrentUserView(APIView):
 class JuniorUserView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request):  # get juniors data
         juniors = request.user.juniors.all()
         if juniors.exists():
             serializer = JuniorSerializer(juniors, many=True)
